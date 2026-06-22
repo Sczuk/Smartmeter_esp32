@@ -14,22 +14,20 @@ Este firmware sera responsavel por oraganizar os dados de cada tomada/interrupto
 
 ## 🧰 Tecnologias utilizadas
 
-- PlatformIO
-- 
-- Wi-Fi
-- Mosquitto
-- MQTT
-- Docker
+- **[PlatformIO](https://platformio.org/)**
+- **[Mosquitto](https://mosquitto.org/)**
+- **[MQTT](https://mqtt.org/)**
+- **[Docker](https://www.docker.com/)**
 
 ## ⚙️ Componentes utilizados
 
-- ESP32
-- Sensor de corrente
-- Fonte de alimentação
-- Jumpers
-- Multiplex
-- Sensor de tensao
-- Rele 
+- **[ESP32](https://www.espressif.com/en/products/socs/esp32)**
+- **[Sensor de corrente](https://portal.vidadesilicio.com.br/acs712-medindo-corrente-eletrica-alternada-continua/)**
+- **[Fonte de alimentação]()**
+- **[Jumpers]()**
+- **[Multiplex](https://cdn.sparkfun.com/assets/learn_tutorials/5/5/3/74HC_HCT4051.pdf)**
+- **[Sensor de tensao](https://datacapturecontrol-com.translate.goog/articles/io-components/sensors/voltage/zmpt101b-ac-voltage-transformer-sensor-module?_x_tr_sl=en&_x_tr_tl=pt&_x_tr_hl=pt&_x_tr_pto=tc)**
+- **[Rele](https://www.circuitbasics.com/wp-content/uploads/2015/11/SRD-05VDC-SL-C-Datasheet.pdf)**
 
 ## 📡 Comunicação
 
@@ -63,8 +61,11 @@ Para que o sistema possa funcionar e necessario conecta-lo ao Wi-Fi. E tambem e 
 Exemplo:
 
 WIFI_SSID=
+
 WIFI_PASSWORD=
+
 MQTT_BROKER=
+
 MQTT_PORT= 1883 (porta comum do Mosquitto)
 
 ## 🚀 Como executar
