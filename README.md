@@ -37,21 +37,18 @@ Exemplo da Estrutura dos topicos:
 
 ```txt
     quarto/
-    └── esp32/
-        ├── tomadas/
-        │   └── tomada-01/
-        │       ├── sensores/
-        │       │   ├── corrente
-        │       │   └── tensao
-        │       ├── status
-        │       └── comandos
-        └── interruptores/
-            └── interruptor-01/
-                ├── sensores/
-                │   ├── corrente
-                │   └── tensao
-                ├── status
-                └── comandos  
+└── esp32/
+    ├── tomadas/
+    │   └── tomada-01/
+    │       ├── sensores
+    │       ├── status
+    │       └── comandos
+    │
+    └── interruptores/
+        └── interruptor-01/
+            ├── sensores
+            ├── status
+            └── comandos
 ```
 
 ## 🔐 Configuração
