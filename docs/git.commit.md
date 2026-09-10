@@ -13,11 +13,11 @@ Todos os commits devem seguir o padrão:
 ### Exemplos
 
 ```text
-feat(mqtt): implement topic hierarchy
+feat(mqtt): implementa hierarquia de tópicos
 
-fix(sensor): correct current calculation
+fix(sensor): corrige cálculo de corrente
 
-docs: update MQTT documentation
+docs: atualiza documentação do MQTT
 ```
 
 ---
@@ -39,23 +39,22 @@ docs: update MQTT documentation
 
 ---
 
-
 ## ✅ Exemplos válidos
 
 ```text
-feat(sensor): add voltage sensor support
+feat(sensor): adiciona suporte a sensor de tensão
 
-feat(mqtt): define command topics
+feat(mqtt): define tópicos de comando
 
-fix(wifi): resolve automatic reconnection
+fix(wifi): resolve reconexão automática
 
-refactor(relay): simplify switching logic
+refactor(rele): simplifica lógica de acionamento
 
-build(platformio): update ESP32 framework
+build(platformio): atualiza framework do ESP32
 
-docs: add installation guide
+docs: adiciona guia de instalação
 
-chore(config): update environment variables
+chore(config): atualiza variáveis de ambiente
 ```
 
 ---
@@ -63,25 +62,25 @@ chore(config): update environment variables
 ## ❌ Exemplos inválidos
 
 ```text
-add mqtt
+adiciona mqtt
 ```
 
 > Commit sem tipo.
 
 ```text
-FEAT(mqtt): add topics
+FEAT(mqtt): adiciona tópicos
 ```
 
 > Tipo em maiúsculo.
 
 ```text
-feat:mqtt topics
+feat:tópicos mqtt
 ```
 
 > Formato incorreto.
 
 ```text
-fix(sensor): fixed current measurement
+fix(sensor): corrigiu medição de corrente
 ```
 
 > Evite verbos no passado.
@@ -102,17 +101,17 @@ fix(sensor): fixed current measurement
 ## 💡 Exemplos para o SmartMeter
 
 ```text
-feat(tomada): add timer command
+feat(tomada): adiciona comando de timer
 
-feat(interruptor): implement status topic
+feat(interruptor): implementa tópico de status
 
-feat(mqtt): add retained status messages
+feat(mqtt): adiciona mensagens de status retidas
 
-fix(sensor): calibrate current readings
+fix(sensor): calibra leituras de corrente
 
-fix(mqtt): resolve broker reconnection issue
+fix(mqtt): resolve problema de reconexão do broker
 
-docs(mqtt): add payload examples
+docs(mqtt): adiciona exemplos de payload
 
-chore(platformio): update dependencies
+chore(platformio): atualiza dependências
 ```
