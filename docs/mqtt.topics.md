@@ -1,47 +1,64 @@
-# 📡 Estrutura de tópicos MQTT
+# 📡 Estrutura de tópicos MQTT — SmartMeter
 
 **Padrão adotado:**
 
 ```txt
-{local}/{dispositivo}/{categoria}/{identificador}/{recurso}
+smartmeter/{smartmeterId}/{recurso}
+smartmeter/{smartmeterId}/device/{recurso}
 ```
 
-**Exemplo:**
+Um `smartmeterId` identifica a placa ESP32 física. Cada placa gerencia um ou mais `device` (tomada/interruptor), cada um com seu próprio conjunto de pinos (tensão, corrente, relé). Por isso os tópicos de telemetria e comando são escopados pelo `smartmeterId`, e o `deviceId` (quando necessário) vai no payload em vez de no tópico — já que measurements reporta todos os devices de uma vez.
 
-```txt
-sala/esp32/tomadas/tomada-01/sensores/corrente
+## Tópicos
+
+| Finalidade                          | Tópico                                        | Direção         | Payload de exemplo |
+| ------------------------------------ | ---------------------------------------------- | ---------------- | -------------------- |
+| Registro de um novo smartmeter       | `smartmeter/config/smartmeter`                 | ESP32 → Backend  | `{"smartmeterId": "0243-8081-1595"}` |
+| Registro/configuração de um device   | `smartmeter/{smartmeterId}/config/device`      | ESP32 → Backend  | `{"deviceId": "3737-4070-8279", "voltagePin": 1, "currentPin": 2, "relePin": 3}` |
+| Dados dos sensores (todos os devices)| `smartmeter/{smartmeterId}/measurements`       | ESP32 → Backend  | ver exemplo abaixo |
+| Comando de um device específico      | `smartmeter/{smartmeterId}/device/command`     | Backend → ESP32  | `{"deviceId": "6540-9186-7349", "command": "TURN_OFF"}` |
+
+**Exemplo — `measurements`:**
+
+```json
+{
+  "smartmeterId": "8323-4559-3633",
+  "devices": [
+    {
+      "deviceId": "2043-6465-3633",
+      "releState": "ONLINE",
+      "current_a": 2.5,
+      "voltage_v": 127,
+      "power_w": 317.5
+    },
+    {
+      "deviceId": "3622-4476-3633",
+      "releState": "OFFLINE",
+      "current_a": "0",
+      "voltage_v": "0",
+      "power_w": "0"
+    }
+  ]
+}
 ```
 
-| Finalidade                        | Tópico                                             | Direção         | Payload de exemplo                                                      |
-| --------------------------------- | -------------------------------------------------- | --------------- | ----------------------------------------------------------------------- |
-| Dados dos sensores da tomada      | `sala/esp32/tomadas/tomada-01/sensores`            | ESP32 → Backend | `{"corrente": 2.5, "tensao": 127, "timestamp": "2026-06-18T16:00:00Z"}` |
-| Estado da tomada                  | `sala/esp32/tomadas/tomada-01/status`              | ESP32 → Backend | `{"estado": "online"}`                                                  |
-| Comandos da tomada                | `sala/esp32/tomadas/tomada-01/comandos`            | Backend → ESP32 | `{"acao": "ligar"}`                                                     |
-| Dados dos sensores do interruptor | `sala/esp32/interruptores/interruptor-01/sensores` | ESP32 → Backend | `{"corrente": 0.8, "tensao": 127, "timestamp": "2026-06-18T16:00:00Z"}` |
-| Estado do interruptor             | `sala/esp32/interruptores/interruptor-01/status`   | ESP32 → Backend | `{"estado": "online"}`                                                  |
-| Comandos do interruptor           | `sala/esp32/interruptores/interruptor-01/comandos` | Backend → ESP32 | `{"acao": "ligar"}`                                                     |
-
-
-## Estados permitidos
+## Estados permitidos (`releState`)
 
 ```txt
-online
-offline
-standby
+ONLINE
+OFFLINE
 ```
 
-## Ações permitidas
+## Ações permitidas (`command`)
 
 ```txt
-ligar
-desligar
-timer
+TURN_ON
+TURN_OFF
 ```
 
 ## Convenções
 
-* Todos os tópicos devem ser escritos em letras minúsculas.
-* Utilizar hífen (`-`) para separar identificadores.
-* Não utilizar espaços, acentos ou caracteres especiais.
+* Tópicos em letras minúsculas; valores de `releState`/`command` em maiúsculas com underscore (`TURN_ON`, `OFFLINE`).
+* `camelCase` para chaves de identificador (`smartmeterId`, `deviceId`).
+* Não utilizar espaços, acentos ou caracteres especiais nos tópicos.
 * Todos os payloads devem ser enviados em formato JSON.
-* Recomenda-se incluir `timestamp` em todas as mensagens de telemetria.
