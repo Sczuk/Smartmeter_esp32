@@ -36,38 +36,26 @@ O ESP32 se conecta à rede Wi-Fi e publica mensagens MQTT em tópicos específic
 Exemplo da Estrutura dos topicos:
 
 ```txt
-    quarto/
-└── esp32/
-    ├── tomadas/
-    │   └── tomada-01/
-    │       ├── sensores
-    │       ├── status
-    │       └── comandos
-    │
-    └── interruptores/
-        └── interruptor-01/
-            ├── sensores
-            ├── status
-            └── comandos
+smartmeter/{smartmeterId}/{recurso}
+smartmeter/{smartmeterId}/device/{recurso}
 ```
 
 ## 🔐 Configuração
 
 Para que o sistema possa funcionar e necessario conecta-lo ao Wi-Fi. E tambem e importante instanciar o IP do broke MQTT, caso esteja utilizando o Mosquitto... O Ip sera o mesmo da maquina em que o servidor do Mosquitto esta rodando
 
-Exemplo:
+Caso o WiFi nao esteja configurado, o sistema do Esp32 abrirá uma conexão com nome `Smartmeter_WiFi_Config`, e será possivel se conectar a `http://192.168.4.1`, onde você vai conseguir configurar seu WiFi.
 
-WIFI_SSID=
+E para configurar o Broker, o Esp abrirá uma conexão chamada `Smartmeter_Broker_Config`, onde vc poderá acessar `http://192.168.4.1`, e terminar de configurar seu Broker. (Para passar o Ip pedido na configuração, é necessario saber qual o Ip da maquina onde o servidor do Broker esta conectado).
 
-WIFI_PASSWORD=
 
-MQTT_BROKER=
+### 🔐 Configuração no codigo
 
-MQTT_PORT= 1883 (porta comum do Mosquitto)
+Dentro do codigo, sera necessario configurar o usuario e a senha para acessar seu Broker, onde tem a explicação no arquivo env.example
 
 ## 🚀 Como executar
 
-Para que seja possivel excutar o projeto e necessario que o Mosquitto ja estaja pre configurado com 
+Para que seja possivel excutar o projeto e necessario que o Broker ja estaja pré configurado.
 
 1. Clonar o repositório
 2. Abrir no PlatformIO
@@ -79,6 +67,4 @@ Para que seja possivel excutar o projeto e necessario que o Mosquitto ja estaja 
 
 Exemplo:
 
-mosquitto_sub -h localhost -t "esp32/#"
-
-mosquitto_pub -h localhost -t "esp32/tomadas/tomada-01/comandos" -m '{"acao":"ligar"}'
+mosquitto_sub -h localhost -t "test/connection" -m 'Hello, Smartmeter'
