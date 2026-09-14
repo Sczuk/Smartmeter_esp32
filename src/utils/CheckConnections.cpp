@@ -16,5 +16,6 @@ void CheckConnections::checkMqtt(PubSubClient& client){
         Serial.println("Broker connetion lost, trying connect...");
         client.connect("esp32client", "user1", "12345");
         Serial.print("Broker status: "); Serial.println(client.state()); Serial.println();
+        delay(100);
     } 
 }
