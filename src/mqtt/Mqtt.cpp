@@ -2,10 +2,13 @@
 #include "mqtt/Mqtt.h"
 #include "Preferences.h"
 #include "ArduinoJson.h"
+#include "model/Smartmeter.h"
 
 void Mqtt::configDevice(String message){
     Preferences preferences;
     JsonDocument json;
+    json.clear();
+
     DeserializationError error = deserializeJson(json, message);
 
     if (error) {
@@ -58,19 +61,30 @@ void Mqtt::configDevice(String message){
 void Mqtt::configSmartmeter(String message){
     Preferences preferences;
     JsonDocument json;
-    deserializeJson(json,message);
+    json.clear();
 
-    String SmartmeterId = json["smartmeterId"];
+    DeserializationError error = deserializeJson(json, message);
+
+    if (error) {
+        Serial.print("Falha na desserialização: ");
+        Serial.println(error.f_str());
+        return;
+    }
+
+    String SmartmeterId = json["smartmeterId"].as<String>();
 
     preferences.begin("smartmeter",false);
     preferences.putString("smartmeter_Id", SmartmeterId);
     preferences.end();
 }
 
-void Mqtt::setTopicSendMeasurements(String smartmeterId){
-    this->topicSendMeasurements = "smartmeter/"+smartmeterId+"/measurements";
+String Mqtt::getTopicSendMeasurements(){
+    this->topicSendMeasurements = "smartmeter/"+Smartmeter::getId()+"/measurements";
+    return this->topicSendMeasurements;
+
 }
 
-void Mqtt::setTopicConfigDevice(String smartmeterId){
-    this->topicConfigDevice = "smartmeter/"+smartmeterId+"/measurements";
+String Mqtt::getTopicConfigDevice(){
+    this->topicConfigDevice = "smartmeter/"+Smartmeter::getId()+"/config/device";
+    return this->topicConfigDevice;
 }

@@ -14,12 +14,9 @@ class Mqtt{
         void configSmartmeter(String message);
         void configDevice(String message);
 
-        void setTopicSendMeasurements(String smartmeterId);
-        void setTopicConfigDevice(String smartmeterId);
-
-        String getTopicSendMeasurements() { return topicSendMeasurements; }
+        String getTopicSendMeasurements();
         String getTopicConfigSmartmeter()  { return topicConfigSmartmeter; }
-        String getTopicConfigDevice()  { return topicConfigDevice; }
+        String getTopicConfigDevice();
 
 };
 
