@@ -56,6 +56,12 @@ void MqttConfig::apBroker(){
     });
 
   server.begin();
+
+  while(!client.connected()){
+    server.handleClient();
+    delay(10);
+  }
+
 }
 
 void MqttConfig::connectBroker(){
@@ -85,6 +91,7 @@ void MqttConfig::connectBroker(){
 
   preferences.end();
   Serial.println("Broker connected!!!");
+  Serial.println();
 }
 
 boolean MqttConfig::initBroker(const char* ip){
@@ -92,7 +99,7 @@ boolean MqttConfig::initBroker(const char* ip){
   client.setServer(ip, 1883);
   client.setCallback(callback);
 
-  Serial.println("Connecting in Mqtt...");
+  Serial.println("Connecting in Broker...");
   while(!client.connected() && seconds < 15){
     client.connect("esp32client", USER_BROKER, PASSWORD_BROKER);
     seconds++;
