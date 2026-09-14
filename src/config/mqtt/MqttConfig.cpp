@@ -17,13 +17,14 @@ MqttConfig::MqttConfig(WebServer& server, MqttView& view, PubSubClient& client)
 }
 
 void callback(char* topic, byte* payload, int length){
-  mqtt.setTopicConfigDevice(Smartmeter::getId());
+  mqtt.getTopicConfigDevice();
 
   Serial.print("message of topic: ");
   Serial.println(topic);
 
   String t = String(topic);
   String message;
+  message.trim();
 
   for(int i = 0; i<length; i++){
     message += (char)payload[i];
@@ -97,11 +98,12 @@ void MqttConfig::connectBroker(){
 boolean MqttConfig::initBroker(const char* ip){
   int seconds = 0;
   client.setServer(ip, 1883);
+  client.setBufferSize(1024);
   client.setCallback(callback);
 
   Serial.println("Connecting in Broker...");
   while(!client.connected() && seconds < 15){
-    client.connect("esp32client", USER_BROKER, PASSWORD_BROKER);
+    client.connect("espClient", USER_BROKER, PASSWORD_BROKER);
     seconds++;
     Serial.println(".");
     delay(1000);
@@ -112,8 +114,11 @@ boolean MqttConfig::initBroker(const char* ip){
   }
 
   client.subscribe("test/connection");
-  client.subscribe(mqtt.getTopicConfigDevice().c_str());
   client.subscribe(mqtt.getTopicConfigSmartmeter().c_str());
+
+  if(Smartmeter::getId() != ""){
+    client.subscribe(mqtt.getTopicConfigDevice().c_str());
+  }
 
   return true;
 }
