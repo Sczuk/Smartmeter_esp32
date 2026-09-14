@@ -100,8 +100,6 @@ void loop() {
             
         }
 
-        mqtt.setTopicSendMeasurements(smartmeterId);
-
         String topicString = mqtt.getTopicSendMeasurements();
         String messageString = Json::serializationMeasurements(smartmeterId, devices);
 
