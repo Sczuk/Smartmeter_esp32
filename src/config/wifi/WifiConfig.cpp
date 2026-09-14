@@ -47,7 +47,14 @@ void WifiConfig::apWifi(){
   server.on("/saveWifi", HTTP_POST, [this]{
     getView().handleSaveWifi();
   });
+
   server.begin();
+
+  while(WiFi.status() != WL_CONNECTED){
+    server.handleClient();
+    delay(10);
+  }
+  
 }
 
 void WifiConfig::connectWifi(){
