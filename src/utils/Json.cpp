@@ -6,6 +6,7 @@
 
 String Json::serializationMeasurements(String smartmeterId, std::vector<Device> devices){
     JsonDocument json;
+    json.clear();
 
     json["smartmeterId"] = smartmeterId;
     JsonArray listDevices = json["devices"].to<JsonArray>();
