@@ -3,6 +3,8 @@
 #include "Preferences.h"
 #include "ArduinoJson.h"
 #include "model/Smartmeter.h"
+#include "model/Device.h"
+#include <vector>
 
 void Mqtt::configDevice(String message){
     Preferences preferences;
@@ -58,6 +60,34 @@ void Mqtt::configDevice(String message){
     ESP.restart();
 }
 
+void Mqtt::turnOnOffRelay(String message){
+    JsonDocument json;
+    json.clear();
+    Device device;
+
+    DeserializationError error = deserializeJson(json, message);
+
+    if (error) {
+        Serial.print("Falha na desserialização: ");
+        Serial.println(error.f_str());
+        return;
+    }
+
+    String deviceId = json["deviceId"].as<String>();
+    String command = json["command"].as<String>();
+
+    std::vector<Device> devices = Device::getListDevices();
+
+    for(int i = 0; i < devices.size(); i++){
+        if(devices[i].getId() == deviceId){
+            devices[i] = device;
+        }
+    }
+
+    if(command == "TURN_ON") device.getRelay().turnOnRelay();
+    if(command == "TURN_OFF") device.getRelay().turnOffRelay();
+}
+
 void Mqtt::configSmartmeter(String message){
     Preferences preferences;
     JsonDocument json;
@@ -82,6 +112,11 @@ String Mqtt::getTopicSendMeasurements(){
     this->topicSendMeasurements = "smartmeter/"+Smartmeter::getId()+"/measurements";
     return this->topicSendMeasurements;
 
+}
+
+String Mqtt::getTopicCommandRelay(){
+    this->topicCommandRelay = "smartmeter/"+Smartmeter::getId()+"/device/command";
+    return this->topicCommandRelay;
 }
 
 String Mqtt::getTopicConfigDevice(){
