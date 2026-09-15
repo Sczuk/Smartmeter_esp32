@@ -2,13 +2,13 @@
 #include <vector>
 #include "Preferences.h"
 
-Device::Device(String id, CurrentSensor currentSensor, Rele rele, VoltageSensor voltageSensor)
-    : id(id), currentSensor(currentSensor), rele(rele), voltageSensor(voltageSensor)
+Device::Device(String id, CurrentSensor currentSensor, Relay relay, VoltageSensor voltageSensor)
+    : id(id), currentSensor(currentSensor), relay(relay), voltageSensor(voltageSensor)
 {
 }
 
-Device::Device(String id, CurrentSensor currentSensor, Rele rele, VoltageSensor voltageSensor, float power)
-    : id(id), currentSensor(currentSensor), rele(rele), voltageSensor(voltageSensor), power(power)
+Device::Device(String id, CurrentSensor currentSensor, Relay relay, VoltageSensor voltageSensor, float power)
+    : id(id), currentSensor(currentSensor), relay(relay), voltageSensor(voltageSensor), power(power)
 {
 }
 
@@ -49,7 +49,7 @@ std::vector<Device> Device::getListDevices(){
         int relePin = preferences.getString(relePinNameChar, "0").toInt();
 
         
-        devices.push_back(Device(deviceId, CurrentSensor(currentPin) , Rele(relePin), VoltageSensor(voltagePin)));
+        devices.push_back(Device(deviceId, CurrentSensor(currentPin) , Relay(relePin), VoltageSensor(voltagePin)));
     }
     preferences.end();
     return devices;
