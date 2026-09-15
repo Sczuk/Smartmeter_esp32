@@ -81,9 +81,9 @@ void loop() {
         lastPublish = millis();
 
         for(int i = 0; i < devices.size(); i++){
-            devices[i].getRele().setState();
+            devices[i].getRelay().getState();
 
-            if(devices[i].getRele().getState() == RELE_STATE_OFF){
+            if(devices[i].getRelay().getState() == RELAY_STATE_OFF){
                 devices[i].getCurrentSensor().setCurrent(0);
                 devices[i].getVoltageSensor().setVoltage(0);
                 devices[i].setPower(0);

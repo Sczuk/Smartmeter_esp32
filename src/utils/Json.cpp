@@ -16,7 +16,7 @@ String Json::serializationMeasurements(String smartmeterId, std::vector<Device> 
         deviceJson["deviceId"] = devices[i].getId();
         deviceJson["current_a"] = devices[i].getCurrentSensor().getCurrent();
         deviceJson["voltage_v"] = devices[i].getVoltageSensor().getVoltage();
-        deviceJson["releState"] = devices[i].getRele().getState();
+        deviceJson["releState"] = devices[i].getRelay().getState();
         deviceJson["power_w"] = devices[i].getPower();
     }
 
