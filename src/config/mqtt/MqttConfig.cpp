@@ -36,6 +36,9 @@ void callback(char* topic, byte* payload, int length){
   if(t == mqtt.getTopicConfigSmartmeter()){
     mqtt.configSmartmeter(message);
   }
+  if(t == mqtt.getTopicCommandRelay()){
+    mqtt.turnOnOffRelay(message);
+  }
   
 }
 
@@ -118,6 +121,11 @@ boolean MqttConfig::initBroker(const char* ip){
 
   if(Smartmeter::getId() != ""){
     client.subscribe(mqtt.getTopicConfigDevice().c_str());
+
+    if(!Device::getListDevices().empty()){
+      client.subscribe(mqtt.getTopicCommandRelay().c_str());
+    }
+
   }
 
   return true;
