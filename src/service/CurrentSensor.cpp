@@ -23,7 +23,7 @@ float CurrentSensor::currentRead(int pin, admux::Mux& mux){
     
     while((micros() - starterTime) < 16666) { //numero aproximado para uma rede de 60hz ((1 segundo em mili)1000 ÷ 60 = 16,67 ms) (16666 microsegundos)
         int leituraADC = mux.read(); //faz a leitura do pino analogico, convertendo a tensao em bits fazendo uma regra de tres da tensao maxima do esp32 com a os bits maximos
-        float voltage = (leituraADC * 5.0) / 4096.0; 
+        float voltage = (leituraADC * 3.3) / 4096.0; 
         // Converte para Volts, 
         //5.0 é a tensao que o sensor esta sendo carregado, 
         //4095 valor maximo do esp32 na porta analogica (12 bits) 
@@ -38,10 +38,10 @@ float CurrentSensor::currentRead(int pin, admux::Mux& mux){
     //primeiro descobrir a corrente pico
     //segundo descobrir a corrente eficaz (Eficaz = Pico * 0.707) (0.707 raiz de 0.5)
 
-    float voltagePeak = biggestVoltage - 3.43; //Como a porta analogica nao pode receber uma tensao negativa, e ela esta sendo carergada por 5v o ponto "0" dela é 2.5, entao se subtrai 2.5 para q a leitura seja baaseada no ponto 0 real
-    //coloquei 3.43 pois o ponto "0" nao esta em 2.5 volts
+    float voltagePeak = biggestVoltage - 1.65; //Como a porta analogica nao pode receber uma tensao negativa, e ela esta sendo carergada por 5v o ponto "0" dela é 2.5, entao se subtrai 2.5 para q a leitura seja baaseada no ponto 0 real
+    //coloquei 1.65 pois é ponto "0"
     if(voltagePeak < 0) voltagePeak = 0;
-    float currentPeak = voltagePeak / sensi; //recebe a voltagem pico e converte com base na nossa sensibilidade para correntePico
+    float currentPeak = voltagePeak / sensi; //recebe a voltagem pico e converte com base na nossa sensibilidade para correntePico *24* 1,4 de voltagepeak
     float currentEffective = currentPeak * 0.707; //converte a nossa correntePico para corrente eficaz
     //corrente eficaz seria o quanto a corrente ac(alternada) seria em dc(continua), o quanto "realmente" esta sendo usado
     return currentEffective;
