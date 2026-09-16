@@ -10,6 +10,7 @@
 
 #include "model/Smartmeter.h"
 #include "model/Device.h"
+#include "model/Relay.h"
 
 #include "mqtt/Mqtt.h"
 
@@ -59,6 +60,11 @@ void setup() {
         Serial.println();
         Serial.println("Smartmeter going restart in 2 minutes...");
         Serial.println("Config new Devices to this Smartmeter work!!!");
+    }
+
+    if(devices.size() != 0){
+        Serial.println("Turn on all devices!!")
+        Relay::turnOnAllRelays();
     }
 }
 

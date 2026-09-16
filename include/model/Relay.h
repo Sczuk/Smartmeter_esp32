@@ -14,6 +14,7 @@ class Relay{
         Relay(int pin);
         void turnOnRelay();
         void turnOffRelay();
+        static void turnOnAllRelays();
 
         String getState();
         void setState(int state);

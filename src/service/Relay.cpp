@@ -1,5 +1,7 @@
 #include "Arduino.h"
 #include "model/Relay.h"
+#include "model/Device.h"
+#include <vector>
 
 Relay::Relay(int pin){
     this->pin = pin;
@@ -37,4 +39,11 @@ void Relay::setState(int state){
         this->state =  RELAY_STATE_OFF;
     } 
 
+}
+
+void Relay::turnOnAllRelays(){
+    std::vector<Device> devices = Device::getListDevices();
+    for(int i = 0; i < devices.size(); i++){
+        devices[i].getRelay().turnOnRelay();
+    }
 }
