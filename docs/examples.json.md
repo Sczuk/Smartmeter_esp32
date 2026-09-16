@@ -29,6 +29,20 @@ smartmeter/{smartmeterId}/config/device
   "deviceId": "1234-1234-0001",
   "voltagePin": "1",
   "currentPin": "2",
-  "relayPin": "23"
+  "relayPin": "4"
+}
+```
+
+## Ligar/Desligar dispositivo
+
+**Tópico:**`
+```
+smartmeter/{smartmeterId}/device/command
+```
+
+```json
+{
+  "deviceId":"1234-1234-0001",
+  "command":"TURN_ON"
 }
 ```
