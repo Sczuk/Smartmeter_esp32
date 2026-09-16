@@ -80,7 +80,7 @@ void Mqtt::turnOnOffRelay(String message){
 
     for(int i = 0; i < devices.size(); i++){
         if(devices[i].getId() == deviceId){
-            devices[i] = device;
+           device = devices[i];
         }
     }
 
