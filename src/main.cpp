@@ -63,7 +63,7 @@ void setup() {
 }
 
 void loop() {
-    checkConnections.checkMqtt(client);
+    checkConnections.checkMqtt(mqttConfig, client);
     checkConnections.checkWifi();
 
     client.loop();
@@ -81,22 +81,24 @@ void loop() {
         lastPublish = millis();
 
         for(int i = 0; i < devices.size(); i++){
-            devices[i].getRelay().getState();
-
+        
             if(devices[i].getRelay().getState() == RELAY_STATE_OFF){
+                
                 devices[i].getCurrentSensor().setCurrent(0);
                 devices[i].getVoltageSensor().setVoltage(0);
                 devices[i].setPower(0);
+
+            }else{
+                devices[i].getRelay().getState();
+
+                float current = CurrentSensor::currentRead(devices[i].getCurrentSensor().getPin(), mux);
+                devices[i].getCurrentSensor().setCurrent(current);
+
+                float voltage = VoltageSensor::voltageRead(devices[i].getVoltageSensor().getPin(), mux);
+                devices[i].getVoltageSensor().setVoltage(voltage);
+
+                devices[i].setPower(CalculatePower::calculate(voltage, current));
             }
-
-            float current = CurrentSensor::currentRead(devices[i].getCurrentSensor().getPin(), mux);
-            devices[i].getCurrentSensor().setCurrent(current);
-
-            float voltage = VoltageSensor::voltageRead(devices[i].getVoltageSensor().getPin(), mux);
-            devices[i].getVoltageSensor().setVoltage(voltage);
-
-            devices[i].setPower(CalculatePower::calculate(voltage, current));
-
             
         }
 

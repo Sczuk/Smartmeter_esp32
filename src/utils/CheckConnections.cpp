@@ -1,5 +1,8 @@
 #include "utils/CheckConnections.h"
 #include "WiFi.h"
+#include "config/mqtt/MqttConfig.h"
+#include "env.h"
+#include "Preferences.h"
 #include "PubSubClient.h"
 
 void CheckConnections::checkWifi(){
@@ -11,11 +14,21 @@ void CheckConnections::checkWifi(){
     }
 }
 
-void CheckConnections::checkMqtt(PubSubClient& client){
+void CheckConnections::checkMqtt(MqttConfig& mqttConfig, PubSubClient& client){
     while(!client.connected()){
+        Preferences preferences;
+        preferences.begin("mqtt", false);
+        const String ip = preferences.getString("ip", "");
+        const char* ipChar = ip.c_str();
+        preferences.end();
+
         Serial.println("Broker connetion lost, trying connect...");
-        client.connect("esp32client", "user1", "12345");
         Serial.print("Broker status: "); Serial.println(client.state()); Serial.println();
-        delay(100);
-    } 
+        mqttConfig.initBroker(ipChar);
+
+        if(client.connected()){
+            Serial.println("Broker reconnected!!!");
+        }
+    }
+    
 }
