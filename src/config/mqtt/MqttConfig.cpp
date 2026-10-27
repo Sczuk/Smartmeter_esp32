@@ -1,8 +1,6 @@
-#include "Preferences.h"
 #include "PubSubClient.h"
 #include "WebServer.h"
 #include "WiFi.h"
-#include "config/mqtt/MqttView.h"
 #include "config/mqtt/MqttConfig.h"
 #include "mqtt/Mqtt.h"
 #include "env.h"
@@ -11,8 +9,8 @@
 
 Mqtt mqtt;
 
-MqttConfig::MqttConfig(WebServer& server, MqttView& view, PubSubClient& client)
-    : server(server), view(view), client(client)
+MqttConfig::MqttConfig(WebServer& server, PubSubClient& client)
+    : server(server), client(client)
 {
 }
 
@@ -24,11 +22,12 @@ void callback(char* topic, byte* payload, int length){
 
   String t = String(topic);
   String message;
-  message.trim();
 
   for(int i = 0; i<length; i++){
     message += (char)payload[i];
   }
+
+  message.trim();
 
   if(t == mqtt.getTopicConfigDevice()){
     mqtt.configDevice(message);
@@ -42,73 +41,41 @@ void callback(char* topic, byte* payload, int length){
   
 }
 
-void MqttConfig::apBroker(){
-
-  const char* ap_ssid = "Smartmeter_Broker_Config";
-  Serial.println("Connect your device on Smartmeter_Broker_Config");
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(ap_ssid,"");
-
-  Serial.println("Web server init. access: http://192.168.4.1");
-
-  server.on("/", [this]() {
-    getView().handleBrokerRoot();
-    });
-
-  server.on("/saveBroker", HTTP_POST, [this]() {
-    getView().handleSaveBroker();
-    });
-
-  server.begin();
-
-  while(!client.connected()){
-    server.handleClient();
-    delay(10);
-  }
-
-}
-
 void MqttConfig::connectBroker(){
-  Preferences preferences;
-  preferences.begin("mqtt", false);
-  const String ip = preferences.getString("ip", "");
-  const char* ipChar = ip.c_str();
-  
-  if(ip == ""){
-    preferences.end();
-    Serial.println("ip not configured");
-    apBroker();
-    return;
+  if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("Wi-Fi not connected.");
+      return;
   }
 
-  boolean isBrokerConnected = initBroker(ipChar);
+  boolean isBrokerConnected = initBroker(MQTT_BROKER_HOST, MQTT_BROKER_PORT);
   
   if(!isBrokerConnected){
-    preferences.end();
-    Serial.println("Retry connect");
-    Serial.print("Ip: ");
-    Serial.println(ip);
-    Serial.println("Not possible to connect");
-    apBroker();
+    Serial.println("Not possible to connect, check the broker configuration and try again!!!");
     return;
   }
 
-  preferences.end();
   Serial.println("Broker connected!!!");
   Serial.println();
 }
 
-boolean MqttConfig::initBroker(const char* ip){
-  int seconds = 0;
-  client.setServer(ip, 1883);
+boolean MqttConfig::initBroker(const char* ip, uint16_t port){
+  String macAddress = WiFi.macAddress();
+  String smartmeterMacAddress = "smartmeter-" + macAddress;
+  int attempts = 0;
+  client.setServer(ip, port);
   client.setBufferSize(1024);
   client.setCallback(callback);
 
   Serial.println("Connecting in Broker...");
-  while(!client.connected() && seconds < 15){
-    client.connect("espClient", USER_BROKER, PASSWORD_BROKER);
-    seconds++;
-    Serial.println(".");
+
+  while(!client.connected() && attempts < 15){
+
+    if (client.connect(smartmeterMacAddress.c_str(), USER_BROKER, PASSWORD_BROKER)) {
+      break;
+    }
+    Serial.print("error to connect in broker, error code: ");
+    Serial.println(client.state());
+    attempts++;
     delay(1000);
   }
 
