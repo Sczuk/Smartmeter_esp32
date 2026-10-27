@@ -5,7 +5,7 @@
 class Mqtt{
 
     private:
-        String topicConfigSmartmeter = "smartmeter/config/smartmeter";
+        String topicConfigSmartmeter;// smartmeter/config/smartmeter/{macAddress}
         String topicConfigDevice; //    smartmeter/{smartmeterid}/config/device
         String topicSendMeasurements;// smartmeter/{smartmeterId}/measurements
         String topicCommandRelay;//     smartmeter/{smartmeterId}/device/command
@@ -18,7 +18,7 @@ class Mqtt{
 
         String getTopicCommandRelay();
         String getTopicSendMeasurements();
-        String getTopicConfigSmartmeter(){ return topicConfigSmartmeter; }
+        String getTopicConfigSmartmeter();
         String getTopicConfigDevice();
 
 };

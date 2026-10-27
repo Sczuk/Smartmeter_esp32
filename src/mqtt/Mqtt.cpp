@@ -4,6 +4,7 @@
 #include "ArduinoJson.h"
 #include "model/Smartmeter.h"
 #include "model/Device.h"
+#include "WiFi.h"
 #include <vector>
 
 void Mqtt::configDevice(String message){
@@ -112,6 +113,11 @@ String Mqtt::getTopicSendMeasurements(){
     this->topicSendMeasurements = "smartmeter/"+Smartmeter::getId()+"/measurements";
     return this->topicSendMeasurements;
 
+}
+
+String Mqtt::getTopicConfigSmartmeter(){
+    this->topicConfigSmartmeter = "smartmeter/config/smartmeter/"+WiFi.macAddress();
+    return this->topicConfigSmartmeter;
 }
 
 String Mqtt::getTopicCommandRelay(){
