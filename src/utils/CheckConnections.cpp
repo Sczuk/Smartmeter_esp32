@@ -16,15 +16,9 @@ void CheckConnections::checkWifi(){
 
 void CheckConnections::checkMqtt(MqttConfig& mqttConfig, PubSubClient& client){
     while(!client.connected()){
-        Preferences preferences;
-        preferences.begin("mqtt", false);
-        const String ip = preferences.getString("ip", "");
-        const char* ipChar = ip.c_str();
-        preferences.end();
-
         Serial.println("Broker connetion lost, trying connect...");
         Serial.print("Broker status: "); Serial.println(client.state()); Serial.println();
-        mqttConfig.initBroker(ipChar);
+        mqttConfig.initBroker(MQTT_BROKER_HOST, MQTT_BROKER_PORT);
 
         if(client.connected()){
             Serial.println("Broker reconnected!!!");
