@@ -1,28 +1,40 @@
 #include "utils/CheckConnections.h"
-#include "WiFi.h"
+#include <WiFi.h>
+#include <PubSubClient.h>
 #include "config/mqtt/MqttConfig.h"
 #include "env.h"
-#include "Preferences.h"
-#include "PubSubClient.h"
 
-void CheckConnections::checkWifi(){
-    while(WiFi.status() != WL_CONNECTED){ // 3 = connected, 6 = disconnected
-        Serial.println("WiFi connetion lost, trying connect...");
+void CheckConnections::checkWifi() {
+    static unsigned long lastAttempt = 0;
+    const unsigned long retryInterval = 5000;
+
+    if (WiFi.status() == WL_CONNECTED) {
+        return;
+    }
+
+    if (millis() - lastAttempt >= retryInterval) {
+        lastAttempt = millis();
+
+        Serial.println("Wi-Fi desconectado. Tentando reconectar...");
         WiFi.reconnect();
-        Serial.print("Wifi status: "); Serial.println(WiFi.status()); Serial.println();
-        delay(1000);
     }
 }
 
-void CheckConnections::checkMqtt(MqttConfig& mqttConfig, PubSubClient& client){
-    while(!client.connected()){
-        Serial.println("Broker connetion lost, trying connect...");
-        Serial.print("Broker status: "); Serial.println(client.state()); Serial.println();
-        mqttConfig.initBroker(MQTT_BROKER_HOST, MQTT_BROKER_PORT);
+void CheckConnections::checkMqtt(MqttConfig& mqttConfig, PubSubClient& client) {
+    static unsigned long lastAttempt = 0;
+    const unsigned long retryInterval = 5000;
 
-        if(client.connected()){
-            Serial.println("Broker reconnected!!!");
+    if (WiFi.status() != WL_CONNECTED || client.connected()) {
+        return;
+    }
+
+    if (millis() - lastAttempt >= retryInterval) {
+        lastAttempt = millis();
+
+        Serial.println("MQTT desconectado. Tentando reconectar...");
+
+        if (mqttConfig.initBroker(MQTT_BROKER_HOST, MQTT_BROKER_PORT)) {
+            Serial.println("Broker reconectado!");
         }
     }
-    
 }
