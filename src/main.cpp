@@ -3,6 +3,7 @@
 #include "WebServer.h"
 #include "Mux.h"
 #include <vector>
+#include <WiFiClientSecure.h>
 
 #include "utils/CalculatePower.h"
 #include "utils/Json.h"
@@ -13,14 +14,14 @@
 #include "model/Relay.h"
 
 #include "mqtt/Mqtt.h"
+#include "config/mqtt/ca_cert.h"
 
 #include "config/mqtt/MqttConfig.h"
-#include "config/mqtt/MqttView.h"
 #include "config/wifi/WifiConfig.h"
 #include "config/wifi/WifiView.h"
 
 WebServer server(80);
-WiFiClient espClient;
+WiFiClientSecure espClient;
 PubSubClient client(espClient);
 
 CheckConnections checkConnections;
@@ -28,8 +29,7 @@ CheckConnections checkConnections;
 WifiView wifiView(server);
 WifiConfig wifiConfig(server, wifiView);
 
-MqttView mqttView(server);
-MqttConfig mqttConfig(server, mqttView, client);
+MqttConfig mqttConfig(server, client);
 
 
 std::vector<Device> devices;
@@ -48,6 +48,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println("ESP iniciou!");
 
+    espClient.setCACert(MQTT_ROOT_CA);
     wifiConfig.connectWifi();
     mqttConfig.connectBroker();
 
@@ -63,7 +64,7 @@ void setup() {
     }
 
     if(devices.size() != 0){
-        Serial.println("Turn on all devices!!")
+        Serial.println("Turn on all devices!!");
         Relay::turnOnAllRelays();
     }
 }
@@ -72,7 +73,10 @@ void loop() {
     checkConnections.checkMqtt(mqttConfig, client);
     checkConnections.checkWifi();
 
-    client.loop();
+    if (client.connected()) {
+        client.loop();
+    }
+    
     server.handleClient();
     
     if(devices.size() == 0){
